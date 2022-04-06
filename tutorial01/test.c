@@ -21,19 +21,12 @@ static int test_pass = 0;
 /* encapsulation API, abstruct formal macro for calling */
 #define EXPECT_EQ_INT(expect, actual)  EXPECT_EQ_BASE((expect) == (actual), expect, actual, "%d")
 
-<<<<<<< HEAD
 
 static void test_parse_null() {
-=======
-static void test_parse_null(){
->>>>>>> 81a40f2189f618876cbfc533eb81b9853d6a19df
     lept_value v;
     v.type = LEPT_FALSE;
     EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, "null"));
     EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
-<<<<<<< HEAD
-    printf("v->type = %d\n", v.type);
-    printf("LEPT_NULL = %d\n", lept_get_type(&v));
 }
 
 static void test_parse_expect_value() {
@@ -43,44 +36,56 @@ static void test_parse_expect_value() {
     EXPECT_EQ_INT(LEPT_PARSE_EXPECT_VALUE, lept_parse(&v, " "));
     EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
     
-}
 
-void test_parse() {
-    test_parse_null();
-=======
-
-    EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, "oknul"));
+    v.type = LEPT_FALSE;
+    EXPECT_EQ_INT(LEPT_PARSE_EXPECT_VALUE, lept_parse(&v, ""));
     EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
 }
 
-static void test_parse_except_value() {
+static void test_parse_invalid_value() {
     lept_value v;
     v.type = LEPT_FALSE;
-
-    EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, ""));
+    EXPECT_EQ_INT(LEPT_PARSE_INVALID_VALUE, lept_parse(&v, "nul"));
     EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
 
     v.type = LEPT_FALSE;
-    EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, " "));
+    EXPECT_EQ_INT(LEPT_PARSE_INVALID_VALUE, lept_parse(&v, "?"));
     EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
+}
+static void test_parse_root_not_singular() {
+    lept_value v;
+    v.type = LEPT_FALSE;
+    EXPECT_EQ_INT(LEPT_PARSE_ROOT_NOT_SINGULAR, lept_parse(&v, "null x"));
+    EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
+}
+
+static void test_parse_true(){
+    lept_value v;
+    v.type = LEPT_FALSE;
+    EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, "true"));
+    EXPECT_EQ_INT(LEPT_TRUE, lept_get_type(&v));
+}
+
+static void test_parse_false() {
+    lept_value v;
+    v.type = LEPT_TRUE;
+    EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, "false"));
+    EXPECT_EQ_INT(LEPT_FALSE, lept_get_type(&v));
 }
 
 static void test_parse() {
     test_parse_null();
-    test_parse_except_value();
->>>>>>> 81a40f2189f618876cbfc533eb81b9853d6a19df
+    test_parse_expect_value();
+    test_parse_invalid_value();
+    test_parse_root_not_singular();
+
+    test_parse_true();
+    test_parse_false();
 }
 
 int main()
 {
-<<<<<<< HEAD
-    /* EXPECT_EQ_BASE(0, 11, 20, "%d");*/
     test_parse();
-=======
-    test_parse();
-    printf("test_count= %d\n", test_count);
->>>>>>> 81a40f2189f618876cbfc533eb81b9853d6a19df
-    printf("test_pass = %d\n", test_pass);
     printf("pass percent = %3.2f%%\n", test_pass * 100.0 / test_count);
     return 0;
 }
