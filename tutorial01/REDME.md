@@ -160,3 +160,10 @@ JSON 是一个树形结构，我们最终需要实现一个树的数据结构，
 - 若值不是那三种字面值，传回 LEPT_PARSE_INVALID_VALUE。
 
 leptjson 是一个手写的递归下降解析器[recursive descent parser](http://www.cs.binghamton.edu/~zdu/parsdemo/recintro.html)
+
+
+因为 static 函数的意思是指，该函数只作用于编译单元中，那么没有被调用时，编译器是能发现的。
+
+为什么使用宏而不用函数或内联函数？
+
+因为这个测试框架使用了 __LINE__ 这个编译器提供的宏，代表编译时该行的行号。如果用函数或内联函数，每次的行号便都会相同。另外，内联函数是 C99 的新增功能，本教程使用 C89。
