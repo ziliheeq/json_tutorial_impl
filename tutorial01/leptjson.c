@@ -1,6 +1,6 @@
-#include "lept.h"
+#include "leptjson.h"
 #include <assert.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 
 #define EXPECT(c, ch) do { assert(*c->json == (ch)); c->json++; } while(0)
 
@@ -24,21 +24,22 @@ static int lept_parse_null(lept_context* c, lept_value* v)
     EXPECT(c, 'n');
     if (c->json[0] != 'u' || c->json[1] != 'l' || c->json[2] != 'l')
         return LEPT_PARSE_INVALID_VALUE;
-    
     c->json += 3;
     v->type = LEPT_NULL;
-    return LEPT_PARSE_OK;    
+    return LEPT_PARSE_OK;
 }
 
 /* value = null / false / true */
 /* 提示：下面代码没处理 false / true，将会是练习之一 */
-static int lept_parse_value(lept_context* c, lept_type* v)
+static int lept_parse_value(lept_context* c, lept_value* v)
 {
     switch (*c->json)
     {
-        case 'n': return lept_parse_null(c, v);
-        default:
-            break;
+    case 'n': return lept_parse_null(c, v);
+    // case 'f': return lept_parse_false(c, v);
+    // case 't': return lept_parse_true(c, v);
+    default:
+        break;
     }
 }
 
@@ -54,6 +55,5 @@ int lept_parse(lept_value* v, const char* json) {
 
 lept_type lept_get_type(const lept_value* v) {
     assert(v != NULL);
-
     return v->type;
 }
