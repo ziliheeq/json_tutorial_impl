@@ -20,13 +20,14 @@ static int test_pass = 0;
 
 /* encapsulation API, abstruct formal macro for calling */
 #define EXPECT_EQ_INT(expect, actual)  EXPECT_EQ_BASE((expect) == (actual), expect, actual, "%d")
+#define EXPECT_EQ_DOUBLE(expect, actual)  EXPECT_EQ_BASE((expect) == (actual), expect, actual, "%.17g")
 
 #define TEST_NUMBER(expect, json) \
     do {\
         lept_value v; \
         EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, json));\
         EXPECT_EQ_INT(LEPT_NUMBER, lept_get_type(&v));\
-        EXPECT_EQ_INT(expect, lept_get_number(&v));\
+        EXPECT_EQ_DOUBLE(expect, lept_get_number(&v));\
     } while(0)
 
 #define TEST_ERROR(error, json) \
@@ -66,8 +67,6 @@ static void test_parse_invalid_value() {
     v.type = LEPT_FALSE;
     EXPECT_EQ_INT(LEPT_PARSE_INVALID_VALUE, lept_parse(&v, "?"));
     EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
-
-    /* invalid number */
     TEST_ERROR(LEPT_PARSE_INVALID_VALUE, "+0");
     TEST_ERROR(LEPT_PARSE_INVALID_VALUE, "+1");
     TEST_ERROR(LEPT_PARSE_INVALID_VALUE, ".123");
@@ -76,7 +75,6 @@ static void test_parse_invalid_value() {
     TEST_ERROR(LEPT_PARSE_INVALID_VALUE, "inf");
     TEST_ERROR(LEPT_PARSE_INVALID_VALUE, "NAN");
     TEST_ERROR(LEPT_PARSE_INVALID_VALUE, "nan");
-
 }
 static void test_parse_root_not_singular() {
     lept_value v;
@@ -102,8 +100,6 @@ static void test_parse_false() {
 
 static void test_parse_numbers(){
     TEST_NUMBER(0.0, "0");
-    TEST_NUMBER(1, "1");
-    TEST_NUMBER(-2, "-2");
     TEST_NUMBER(1E+10, "1E+10");
     TEST_NUMBER(1E10, "1E10");
     TEST_NUMBER(0.0, "0");
@@ -125,6 +121,8 @@ static void test_parse_numbers(){
     TEST_NUMBER(1.234E+10, "1.234E+10");
     TEST_NUMBER(1.234E-10, "1.234E-10");
     TEST_NUMBER(0.0, "1e-10000"); 
+    TEST_NUMBER(0.0117187531, "0.0117187531");
+    TEST_NUMBER(1.0000000000000004, "1.0000000000000004");
 }
 
 static void test_parse() {
