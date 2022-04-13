@@ -4,7 +4,7 @@ project (leptjson_test C)
 message( STATUS "c compiler id is ${CMAKE_C_COMPILER_ID}" )
 
 if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ansi -pedantic -Wall")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ansi -pedantic -g -Wall")
 endif()
 
 add_library(leptjson leptjson.c)

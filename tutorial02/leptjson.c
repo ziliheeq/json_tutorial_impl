@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 #define EXPECT(c, ch) do { assert(*c->json == (ch)); c->json++; } while(0)
-#define ISDIGIT(ch) ((ch) > '0' && (ch) < '9')
-#define ISDIGIT1TO9(ch) ((ch) > '1' && (ch) < '9')
+#define ISDIGIT(ch) ((ch) >= '0' && (ch) <= '9')
+#define ISDIGIT1TO9(ch) ((ch) >= '1' && (ch) <= '9')
 
 typedef struct {
     const char* json;
@@ -36,12 +36,36 @@ const char* literal, lept_type type) {
 
 
 static int lept_parse_number(lept_context* c, lept_value* v) {
-    char* end;
-    v->n = strtod(c->json, &end);
-    if (c->json == end)
-        return LEPT_PARSE_INVALID_VALUE;
-    c->json = end;
+    const char* p = c->json;
+    /* 负号 '-' */
+    if (*p == '-') p++;
+    /* 整数 */
+    if (*p == '0') p++;
+    else {
+        if (!ISDIGIT1TO9(*p)) return LEPT_PARSE_INVALID_VALUE;
+        for (p++; ISDIGIT(*p); p++);
+    }
+
+    /* 小数 */
+    if (*p == '.' ) {
+        p++;
+        if (!ISDIGIT(*p)) return LEPT_PARSE_INVALID_VALUE;
+        for (p++; ISDIGIT(*p); p++);
+    }
+
+    /* 指数 */
+    if (*p == 'e' || *p == 'E') {
+        p++;
+        if (*p == '+' || *p == '-') p++;
+        if (!ISDIGIT(*p)) return LEPT_PARSE_INVALID_VALUE;
+        for (p++; ISDIGIT(*p); p++);
+
+    }
+
+    v->n = strtod(c->json, NULL);
     v->type = LEPT_NUMBER;
+    c->json = p;
+
     return LEPT_PARSE_OK;
 }
 
@@ -54,7 +78,7 @@ static int lept_parse_value(lept_context* c, lept_value* v)
         case 't': return lept_parse_literal(c, v, "true", LEPT_TRUE);
         case 'f': return lept_parse_literal(c, v, "false", LEPT_FALSE);
         case 'n': return lept_parse_literal(c, v, "null", LEPT_NULL);
-        default: return lept_parse_number(c, v);
+        default:  return lept_parse_number(c, v);
         case '\0': return LEPT_PARSE_EXPECT_VALUE;
     }
 }
