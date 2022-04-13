@@ -135,6 +135,11 @@ static void test_parse_numbers(){
     TEST_NUMBER(-1.7976931348623157e+308, "-1.7976931348623157e+308");
 }
 
+static void test_parse_number_too_big() {
+    TEST_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "1e309");
+    TEST_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "-1e309");
+}
+
 static void test_parse() {
     test_parse_null();
     test_parse_expect_value();
@@ -145,6 +150,7 @@ static void test_parse() {
     test_parse_false();
 
     test_parse_numbers();
+    test_parse_number_too_big();
 }
 
 int main()
