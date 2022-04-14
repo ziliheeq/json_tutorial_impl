@@ -22,6 +22,8 @@ static int test_pass = 0;
 #define EXPECT_EQ_INT(expect, actual)  EXPECT_EQ_BASE((expect) == (actual), expect, actual, "%d")
 #define EXPECT_EQ_DOUBLE(expect, actual)  EXPECT_EQ_BASE((expect) == (actual), expect, actual, "%.17g")
 
+
+
 #define TEST_NUMBER(expect, json) \
     do {\
         lept_value v; \
@@ -140,6 +142,10 @@ static void test_parse_number_too_big() {
     TEST_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "-1e309");
 }
 
+static void test_access_string() {
+    
+}
+
 static void test_parse() {
     test_parse_null();
     test_parse_expect_value();
@@ -151,6 +157,8 @@ static void test_parse() {
 
     test_parse_numbers();
     test_parse_number_too_big();
+
+    test_access_string();
 }
 
 int main()

@@ -1,6 +1,8 @@
 #ifndef LEPT_H__
 #define LEPT_H__
+#define lept_set_null(v) lept_free(v)
 
+#define lept_init(v) do { (v)->type = LEPT_NULL; } while(0)
 /* all json type */
 typedef enum {
     LEPT_NULL,
@@ -14,7 +16,11 @@ typedef enum {
 
 /* json node [tree] */
 typedef struct {
-    double n;
+    union 
+    {
+        struct { char* s; size_t len; } s; /* 字符串 */
+        double n;  /* 数字 */
+    } u;
     lept_type type;
 } lept_value;
 
@@ -33,5 +39,15 @@ int lept_parse(lept_value* v, const char* json);
 lept_type lept_get_type(const lept_value* v);
 /* get number value */
 double lept_get_number(const lept_value* v);
+void lept_set_number(lept_value* v, double n);
+
+int lept_get_boolean(const lept_value* v);
+void lept_set_boolean(lept_value* v, int b);
+
+const char* lept_get_string(const lept_value* v);
+size_t lept_get_string_length(const lept_value* v);
+void lept_set_string(lept_value* v, const char* s, size_t len);
+
+
 
 #endif
