@@ -22,7 +22,7 @@ static int test_pass = 0;
 #define EXPECT_EQ_INT(expect, actual)  EXPECT_EQ_BASE((expect) == (actual), expect, actual, "%d")
 #define EXPECT_EQ_DOUBLE(expect, actual)  EXPECT_EQ_BASE((expect) == (actual), expect, actual, "%.17g")
 #define EXPECT_EQ_STRING(expect, actual, alength) \
-            EXPECT_EQ_BASE(strcmp((expect), (actual)) == 0 && alength == sizof(expect)-1, expect, actual, "%s")
+            EXPECT_EQ_BASE(strcmp((expect), (actual)) == 0 && alength == sizeof(expect)-1, expect, actual, "%s")
 
 #define TEST_NUMBER(expect, json) \
     do {\
@@ -151,8 +151,9 @@ static void test_parse_string() {
     TEST_STRING("", "\"\"");
     TEST_STRING("Hello", "\"Hello\"");
 
-    TEST_STRING("Hello\nWorld", "\"Hello\\nWorld\"");
-    TEST_STRING("\" \\ / \b \f \n \r \t", "\"\\\" \\\\ \\/ \\b \\f \\n \\r \\t\"");
+    TEST_STRING("Hello\\nWorld", "\"Hello\\nWorld\"");
+    TEST_STRING("\"\\\" / \b \f \\n \r \t", "\"\\\" \\\\ \\ / \\b \\f \\n \\r \\t\"");
+    TEST_STRING("\\", "\"\\\"");
 }
 
 static void test_parse_number_too_big() {
@@ -160,12 +161,6 @@ static void test_parse_number_too_big() {
     TEST_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "-1e309");
 }
 
-static void test_access_string() {
-    lept_value v;
-    lept_init(&v);
-    lept_set_string(&v, "", 0);
-    
-}
 
 static void test_parse() {
     test_parse_null();
@@ -174,14 +169,9 @@ static void test_parse() {
     test_parse_false();
     test_parse_string();
 
-
     test_parse_expect_value();
     test_parse_invalid_value();
     test_parse_root_not_singular();
-
-    
-
-    
     test_parse_number_too_big();
 }
 
