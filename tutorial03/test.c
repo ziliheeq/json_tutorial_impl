@@ -152,7 +152,10 @@ static void test_parse_string() {
     TEST_STRING("Hello", "\"Hello\"");
 
     TEST_STRING("Hello\\nWorld", "\"Hello\\nWorld\"");
+    TEST_STRING("\"", "\"\\\"\"");
+    /*
     TEST_STRING("\"\\\" / \b \f \\n \r \t", "\"\\\" \\\\ \\ / \\b \\f \\n \\r \\t\"");
+    */
     TEST_STRING("\\", "\"\\\"");
 }
 
@@ -161,6 +164,42 @@ static void test_parse_number_too_big() {
     TEST_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "-1e309");
 }
 
+/*boolean 值访问测试*/
+static void test_access_boolean() {
+    lept_value v;
+    lept_set_boolean(&v, LEPT_FALSE);
+    EXPECT_EQ_INT(LEPT_FALSE, lept_get_boolean(&v));
+
+     lept_set_boolean(&v, LEPT_TRUE);
+    EXPECT_EQ_INT(LEPT_TRUE, lept_get_boolean(&v));
+}
+
+/* string 值访问测试*/
+static void test_access_string() {
+    lept_value v;
+    lept_init(&v);
+    lept_set_string(&v, "", 0);
+
+    EXPECT_EQ_STRING("", lept_get_string(&v), lept_get_string_length(&v));
+
+    lept_set_string(&v, "Hello", 5);
+    EXPECT_EQ_STRING("Hello", lept_get_string(&v), lept_get_string_length(&v));
+
+    lept_free(&v);
+}
+
+/* null 访问 */
+static void test_access_null() {
+    lept_value v;
+    lept_set_null(&v);
+    EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
+}
+
+static void test_accesss_number() {
+    lept_value v;
+    lept_set_number(&v, 2.2);
+    EXPECT_EQ_DOUBLE(2.2, lept_get_number(&v));
+}
 
 static void test_parse() {
     test_parse_null();
@@ -173,6 +212,11 @@ static void test_parse() {
     test_parse_invalid_value();
     test_parse_root_not_singular();
     test_parse_number_too_big();
+
+    test_access_boolean();
+    test_access_string();
+    test_access_null();
+    test_accesss_number();
 }
 
 int main()

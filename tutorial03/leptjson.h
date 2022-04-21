@@ -38,11 +38,10 @@ enum {
     LEPT_PARSE_INVALID_STRING_CHAR
 };
 
-/* api 01 parse json */
 int lept_parse(lept_value* v, const char* json);
-/* api 02 access result , get type */
 lept_type lept_get_type(const lept_value* v);
-/* get number value */
+
+
 double lept_get_number(const lept_value* v);
 void lept_set_number(lept_value* v, double n);
 

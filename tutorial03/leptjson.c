@@ -165,6 +165,21 @@ void lept_set_string(lept_value* v, const char* s, size_t len) {
     v->type = LEPT_STRING;
 }
 
+void lept_set_number(lept_value* v, double n) {
+    assert(v != NULL);
+    v->type = LEPT_NUMBER;
+    v->u.n  = n;
+}
+
+
+void lept_set_boolean(lept_value* v, int b) {
+    assert(v != NULL && (b == LEPT_FALSE || b == LEPT_TRUE));
+    if (b == LEPT_FALSE) 
+        v->type = LEPT_FALSE;
+    else
+        v->type = LEPT_TRUE;
+}
+
 int lept_parse(lept_value* v, const char* json) {
     lept_context c;
     int ret;
@@ -204,4 +219,9 @@ size_t lept_get_string_length(const lept_value* v) {
 const char* lept_get_string(const lept_value* v) {
     assert(v->type == LEPT_STRING);
     return v->u.s.s;
+}
+
+int lept_get_boolean(const lept_value* v){
+    assert(v->type==LEPT_TRUE || v->type==LEPT_FALSE);
+    return  v->type == LEPT_TRUE ? LEPT_TRUE : LEPT_FALSE;
 }
