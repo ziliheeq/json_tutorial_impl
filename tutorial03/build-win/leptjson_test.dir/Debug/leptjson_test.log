@@ -1,0 +1,7 @@
+﻿  test.c
+F:\GitHub\json_tutorial_impl\tutorial03\test.c(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\GitHub\json_tutorial_impl\tutorial03\test.c(250,24): warning C4013: “test_access_boolean”未定义；假设外部返回 int
+F:\GitHub\json_tutorial_impl\tutorial03\test.c(251,23): warning C4013: “test_access_string”未定义；假设外部返回 int
+test.obj : error LNK2019: 无法解析的外部符号 test_access_boolean，函数 test_parse 中引用了该符号
+test.obj : error LNK2019: 无法解析的外部符号 test_access_string，函数 test_parse 中引用了该符号
+F:\GitHub\json_tutorial_impl\tutorial03\build-win\Debug\leptjson_test.exe : fatal error LNK1120: 2 个无法解析的外部命令

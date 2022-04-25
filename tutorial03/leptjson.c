@@ -1,3 +1,7 @@
+#ifdef _WINDOWS
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
 #include "leptjson.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -86,8 +90,7 @@ static int lept_parse_number(lept_context* c, lept_value* v) {
     return LEPT_PARSE_OK;
 }
 
-
-
+/*压栈*/
 static void* lept_context_push(lept_context* c, size_t size) {
     void* ret;
     
@@ -115,6 +118,7 @@ static int lept_parse_string(lept_context* c, lept_value* v) {
     const char* p;
     EXPECT(c, '\"');
     p = c->json;
+    
     for(;;) {
         char ch = *p++;
         switch (ch)
@@ -124,11 +128,30 @@ static int lept_parse_string(lept_context* c, lept_value* v) {
             lept_set_string(v, (const char*)lept_context_pop(c, len), len);
             c->json = p;
             return LEPT_PARSE_OK;
+        
+        case '\\':
+            switch (*p++) {
+                case '\"': PUTC(c, '\"'); break;
+                case '\\': PUTC(c, '\\'); break;
+                case '/':  PUTC(c, '/'); break;
+                case 'b':  PUTC(c, '\b'); break;
+                case 'f':  PUTC(c, '\f'); break;
+                case 'n':  PUTC(c, '\n'); break;
+                case 'r':  PUTC(c, '\r'); break;
+                case 't':  PUTC(c, '\t'); break;
+                default:
+                    c->top = head;
+                    return LEPT_PARSE_INVALID_STRING_ESCAPE;
+            } break;
         case '\0':
             c->top = head;
             return LEPT_PARSE_MISS_QUOTATION_MARK;
+        
         default:
-            PUTC(c, ch);
+            if ((unsigned char) ch < 0x20) {
+                c->top = head;
+                return LEPT_PARSE_INVALID_STRING_CHAR;
+            } else PUTC(c, ch);
         }
     }
 }
@@ -163,6 +186,18 @@ void lept_set_string(lept_value* v, const char* s, size_t len) {
     v->u.s.s[len] = '\0';
     v->u.s.len = len;
     v->type = LEPT_STRING;
+}
+
+void lept_set_number(lept_value* v, double n) {
+    lept_free(v);
+    v->type = LEPT_NUMBER;
+    v->u.n  = n;
+}
+
+
+void lept_set_boolean(lept_value* v, int b) {
+    lept_free(v);
+    v->type = b ? LEPT_TRUE : LEPT_FALSE;
 }
 
 int lept_parse(lept_value* v, const char* json) {
@@ -204,4 +239,9 @@ size_t lept_get_string_length(const lept_value* v) {
 const char* lept_get_string(const lept_value* v) {
     assert(v->type == LEPT_STRING);
     return v->u.s.s;
+}
+
+int lept_get_boolean(const lept_value* v){
+    assert(v != NULL && (v->type==LEPT_TRUE || v->type==LEPT_FALSE));
+    return  v->type == LEPT_TRUE;
 }
