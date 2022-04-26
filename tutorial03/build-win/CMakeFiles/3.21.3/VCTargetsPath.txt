@@ -1,1 +1,0 @@
-F:/programs/visualstudio2019ce/MSBuild/Microsoft/VC/v160
