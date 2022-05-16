@@ -181,8 +181,49 @@ static int lept_parse_string(lept_context* c, lept_value* v) {
     }
 }
 
+/* 前向声明 */
 static int lept_parse_value(lept_context* c, lept_value* v);
 
+
+static int lept_parse_array(lept_context* c, lept_value* v) {
+    size_t size = 0;
+    int ret;
+    EXPECT(c, '[');
+    /* 空数组 */
+    if (*c->json == ']') {
+        c->json++;
+        v->type = LEPT_ARRAY;
+        v->u.a.size = 0;
+        v->u.a.e = NULL;
+        return LEPT_PARSE_OK;
+    }
+    for (;;) {
+        /*在循环中建立临时值*/
+        lept_value e;
+        lept_init(&e);
+        /*调用lept_parse_vale将元素即系至这个临时值*/
+        if ((ret = lept_parse_value(c, &e)) != LEPT_PARSE_OK) 
+            return ret;
+        memcpy(lept_context_push(c, sizeof(lept_value)), &e, sizeof(lept_value));
+        size++;
+        if(*c->json == ',')
+            c->json++;
+        /*当遇到] 吧栈内的元素弹出*/
+        else if (*c->json == ']') {
+            c->json++;
+            v->type = LEPT_ARRAY;
+            v->u.a.size = size;
+            size *= sizeof(lept_value);
+            /*分配内存，生成数组值*/
+            memcpy(v->u.a.e = (lept_value*)malloc(size), lept_context_pop(c, size), size);
+            return LEPT_PARSE_OK;
+        }
+        else
+            return LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET;
+    }
+}
+
+/*
 static int lept_parse_array(lept_context* c, lept_value* v) {
     size_t size = 0;
     int ret;
@@ -215,6 +256,7 @@ static int lept_parse_array(lept_context* c, lept_value* v) {
             return LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET;
     }
 }
+*/
 
 static int lept_parse_value(lept_context* c, lept_value* v) {
     switch (*c->json) {
