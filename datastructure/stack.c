@@ -8,13 +8,16 @@ struct SNode {
     Postion Top; /* 栈顶指针 */
     int MaxSize; /* 栈容量 */
 };
-
 typedef PtrToSNode stack;
+
+
+
 
 stack CreateStack(int MaxSize) {
     stack s = (stack)malloc(sizeof(struct SNode));
     s->data = (int*)malloc(MaxSize* sizeof(int));
     s->MaxSize = MaxSize;
+    s->Top = -1;
     return s;
 }
 
@@ -30,5 +33,19 @@ bool Push(stack s, int x) {
         s->data[++(s->Top)] == x;
         return true;
     }
+}
+
+bool IsEmpty(stack s) {
+    return (s->Top == -1);
+}
+
+#define ERROR -1
+
+int Pop(stack s){
+    if(IsEmpty(s)) {
+        printf("堆栈空");
+        return ERROR;
+    } else
+        return (s->data[(s->Top)--]);
 }
 

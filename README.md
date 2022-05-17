@@ -91,4 +91,22 @@ bool Push(stack s, int x) {
     }
 }
 ```
+重点操作三：弹栈——`POP`
 
+1、首先判断当前栈是否为空
+
+2、不空，返回`data[top]`，同时将top - 1
+
+3、否则返回错误标志
+```c
+#define ERROR -1
+
+int Pop(stack s){
+    if(IsEmpty(s)) {
+        printf("堆栈空");
+        return ERROR;
+    } else
+        return (s->data[(s->Top)--]);
+}
+```
+双堆栈
